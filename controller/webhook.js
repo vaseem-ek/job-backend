@@ -30,6 +30,7 @@ export const clerkWebhook = async (req, res) => {
                     image:data.image_url,
                     resume:""
                 }
+                
                 await user.create(userData)
                 res.json({})
                 break;
