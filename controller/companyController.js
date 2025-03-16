@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 import { v2 as cloudinary } from "cloudinary";
 import generateToken from "../utils/generateToken.js";
 import job from "../models/job.js";
+import JobApplication from "../models/jobApplications.js";
 
 //register a new company
 
@@ -100,7 +101,13 @@ export const postJob = async (req, res) => {
 //get company applications
 export const getCompanyApplicants = async (req, res) => {
     try {
-
+        const companyId=req.company._id
+        //find job appplications
+        const applications=await JobApplication.find({companyId})
+        .populate('userId','name image resume')
+        .populate('jobId','title location category level salary')
+        .exec()
+return res.json({success:true,applications})
 
     } catch (error) {
         console.log(error.message);
@@ -113,7 +120,13 @@ export const getCompanyPostedJobs = async (req, res) => {
     try {
         const companyId = req.company._id
         const jobs = await job.find({ companyId })
-        return res.json({ success: true, jobsData: jobs })
+
+        // adding toDo No of applications
+        const jobsData=await Promise.all(jobs.map(async(jobt)=>{
+            const applicants=await JobApplication.find({jobId:jobt._id})
+            return {...jobt.toObject(),applicants:applicants.length}
+        }))
+        return res.json({ success: true, jobsData })
     } catch (error) {
         console.log(error.message);
         return res.json({ success: false, message: error.message })
@@ -123,6 +136,7 @@ export const getCompanyPostedJobs = async (req, res) => {
 //change application status
 export const changeJobApplicantsStatus = async (req, res) => {
     try {
+        
 
     } catch (error) {
         console.log(error.message);

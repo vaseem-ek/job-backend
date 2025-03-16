@@ -3,6 +3,7 @@ import company from '../models/company.js'
 
 export const protectCompany=async(req,res,next)=>{
     const token =req.headers.token
+    
     if(!token){
         return res.json({success:false,message:"not authorised login again"})
     }

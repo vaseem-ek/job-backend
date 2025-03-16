@@ -2,7 +2,7 @@ import job from "../models/job.js"
 
 
 
-//get alll jobs
+//get all jobs
 export const getJobs = async (req, res) => {
     try {
         const jobs=await job.find({visible:true})
